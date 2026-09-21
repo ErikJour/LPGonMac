@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>BluetoothSelector</string>
+	<string>AnimatedLPG</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.animatedinstruments.bluetooth</string>
 	<key>CFBundleInfoDictionaryVersion</key>

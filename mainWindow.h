@@ -1,13 +1,67 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import <QuartzCore/CAMetalLayer.h>
-#import "AppLifecycle/Renderer.h"
 
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 288
-//===========================================================================
-//We create a WindowDelegate class. Inherits from NSObject, adpots NSApplicationDelegate and NSWindowDelegate
-//===========================================================================
+static const NSUInteger kMaxBuffers = 3;
+//==============================================================
+@interface
+MTKViewDelegate: NSObject <MTKViewDelegate>
+@property id<MTLCommandQueue> commandQueue;
+@end
+
+@implementation MTKViewDelegate
+{
+    dispatch_semaphore_t     _frameBoundarySemaphore;
+	uint32_t      			 _currentFrameIndex;
+}
+
+-(void)configureMetal
+{
+_frameBoundarySemaphore = dispatch_semaphore_create(kMaxBuffers);
+_currentFrameIndex      = 0;
+}
+
+-(void)mtkView:(MTKView *) view drawableSizeWillChange:(CGSize) size
+{
+
+}
+
+- (void)drawInMTKView:(MTKView *) view
+{
+	dispatch_semaphore_wait(_frameBoundarySemaphore, DISPATCH_TIME_FOREVER);
+
+	MTLViewport viewPort = { 0, 0, GLOBAL_WIDTH, GLOBAL_HEIGHT };
+
+	@autoreleasepool{
+
+	id<MTLCommandBuffer> CommandBuffer = [self.commandQueue commandBuffer];
+
+	MTLRenderPassDescriptor *RenderPassDescriptor       = [view currentRenderPassDescriptor];
+	RenderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+	MTLClearColor MetalClearColor                       = MTLClearColorMake(0.0f, 255.0f, 0.0f, 1.0f);
+	RenderPassDescriptor.colorAttachments[0].clearColor = MetalClearColor;
+
+	id<MTLRenderCommandEncoder> RenderEncoder = [CommandBuffer renderCommandEncoderWithDescriptor:RenderPassDescriptor];
+	RenderEncoder.label = @"RenderEncoder";
+	[RenderEncoder setViewport: viewPort];
+	[RenderEncoder endEncoding];
+
+	id<CAMetalDrawable> NextDrawable = [view currentDrawable];
+	[CommandBuffer presentDrawable:NextDrawable];
+
+	__block dispatch_semaphore_t semaphore = _frameBoundarySemaphore;
+
+	[CommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> commandBuffer) {
+		dispatch_semaphore_signal(semaphore);
+	}];
+
+	[CommandBuffer commit];
+	}
+}
+
+@end
+//==============================================================
 @interface
 BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 @end
@@ -16,9 +70,11 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 @implementation BtWindowDel
 {
     // The on-screen window: title bar, frame, screen position
-    NSWindow*     _window;
-	MTKView*      _metalKitView;
-    Renderer*     _renderer;
+    NSWindow*           _window;
+	MTKView*            _metalKitView;
+	MTKViewDelegate*    _viewDelegate;
+	id<MTLDevice>       _metalKitDevice;
+	id<MTLCommandQueue>  _commandQueue;
 }
 //===========================================================
 //This is our initialization, called by OS via main in NSApplication
@@ -39,19 +95,33 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
                                             backing: NSBackingStoreBuffered
                                               defer: NO];
 
-    _window.releasedWhenClosed = NO;
-    _window.minSize            = NSMakeSize(GLOBAL_WIDTH, GLOBAL_HEIGHT);
-    _window.backgroundColor    = NSColor.orangeColor;
-    _window.title              = @"Bluetooth Selector";
-    _window.delegate           = self;
+    _window.releasedWhenClosed    = NO;
+    _window.minSize               = NSMakeSize(GLOBAL_WIDTH, GLOBAL_HEIGHT);
+    _window.backgroundColor       = NSColor.orangeColor;
+    _window.title                 = @"Animated LPG";
+    _window.delegate              = self;
+	_window.contentView           = _metalKitView;
     //============================================================================
     //Metal Layer Setup
     //============================================================================
-    _metalKitView                 = [[MTKView alloc] initWithFrame:_window.contentLayoutRect];
-    _metalKitView.device          = MTLCreateSystemDefaultDevice();
-    _metalKitView.framebufferOnly = YES;
-    _metalKitView.colorspace      = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-	_window.contentView           = _metalKitView;
+	_metalKitDevice				   = MTLCreateSystemDefaultDevice();
+	_commandQueue					= [_metalKitDevice newCommandQueue];
+	 _viewDelegate                 = [[MTKViewDelegate alloc] init];
+	[_viewDelegate configureMetal];
+
+	 _viewDelegate.commandQueue    = _commandQueue;
+	_commandQueue					= [_metalKitDevice newCommandQueue];
+    _metalKitView.device           = _metalKitDevice;
+    _metalKitView                  = [[MTKView alloc] initWithFrame:_window.contentLayoutRect
+																	device:_metalKitDevice];
+    _metalKitView.framebufferOnly  = YES;
+    CGColorSpaceRef cs             = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+	_metalKitView.colorspace       = cs;
+	CGColorSpaceRelease(cs);
+	_metalKitView.clearColor       = MTLClearColorMake(0.0, 0.0, 1.0, 1.0); // Solid Blue
+	_metalKitView.delegate         = _viewDelegate;
+	_window.contentView            = _metalKitView;
+	//============================================================================
     //============================================================================
     //Renderer Setup
     //============================================================================

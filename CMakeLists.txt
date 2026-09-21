@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.1)
 
-project(BluetoothSelector
+project(HomemadeLPG
         LANGUAGES
         C
         CXX
@@ -10,25 +10,24 @@ project(BluetoothSelector
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(BluetoothSelector MACOSX_BUNDLE
+add_executable(HomemadeLPG MACOSX_BUNDLE
         main.mm
         mainWindow.h
-        AppLifecycle/Renderer.mm
-        AppLifecycle/Renderer.h)
+)
 
 #======================================================
 #Automatically manage memory
 #======================================================
-target_compile_options(BluetoothSelector PRIVATE
+target_compile_options(HomemadeLPG PRIVATE
         -fobjc-arc)
 #======================================================
 #Plist for metadata settings
 #======================================================
-set_target_properties(BluetoothSelector PROPERTIES
+set_target_properties(HomemadeLPG PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST
         ${CMAKE_CURRENT_SOURCE_DIR}/AppLifecycle/Info.plist)
 
-target_link_libraries(BluetoothSelector
+target_link_libraries(HomemadeLPG
         PRIVATE
         "-framework AppKit"
         "-framework Metal"
@@ -67,7 +66,7 @@ add_custom_command(
         COMMENT "Compiling Metal shaders"
 )
 
-target_sources(BluetoothSelector PRIVATE
+target_sources(HomemadeLPG PRIVATE
         ${METALLIB}
 )
 
