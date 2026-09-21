@@ -70,11 +70,12 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 @implementation BtWindowDel
 {
     // The on-screen window: title bar, frame, screen position
-    NSWindow*           _window;
-	MTKView*            _metalKitView;
-	MTKViewDelegate*    _viewDelegate;
-	id<MTLDevice>       _metalKitDevice;
-	id<MTLCommandQueue>  _commandQueue;
+    NSWindow*                   _window;
+	MTKView*                    _metalKitView;
+	MTKViewDelegate*            _viewDelegate;
+	id<MTLDevice>               _metalKitDevice;
+	id<MTLCommandQueue>         _commandQueue;
+	id<MTLRenderPipelineState>  ColidColorPipelineState;
 }
 //===========================================================
 //This is our initialization, called by OS via main in NSApplication
@@ -105,12 +106,35 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
     //Metal Layer Setup
     //============================================================================
 	_metalKitDevice				   = MTLCreateSystemDefaultDevice();
-	_commandQueue					= [_metalKitDevice newCommandQueue];
+	_commandQueue				   = [_metalKitDevice newCommandQueue];
 	 _viewDelegate                 = [[MTKViewDelegate alloc] init];
 	[_viewDelegate configureMetal];
 
-	 _viewDelegate.commandQueue    = _commandQueue;
-	_commandQueue					= [_metalKitDevice newCommandQueue];
+	_viewDelegate.commandQueue     = _commandQueue;
+	_commandQueue				   = [_metalKitDevice newCommandQueue];
+	NSError *Error                 = NULL;
+	NSString *libPath = [NSBundle.mainBundle.resourcePath
+                             stringByAppendingPathComponent:@"shaders.metallib"];
+	id<MTLLibrary> shaderLibrary = [_metalKitDevice newLibraryWithFile: libPath
+														error: &Error];
+
+	//Render pipeline
+	MTLRenderPipelineDescriptor *SolidColorPipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+	ColidColorPipelineState        = [_metalKitDevice newRenderPipelineStateWithDescriptor: SolidColorPipelineDescriptor
+																							error: &Error];
+	id<MTLLibrary> lib = [_metalKitDevice newLibraryWithURL:[NSURL fileURLWithPath:libPath]
+                                                  error:&Error];
+	id<MTLFunction> vfn = [lib newFunctionWithName:@"vertexMain"];
+    id<MTLFunction> ffn = [lib newFunctionWithName:@"fragmentMain"];
+    NSAssert(vfn && ffn, @"Missing shader functions");
+	SolidColorPipelineDescriptor.vertexFunction = vfn;
+	SolidColorPipelineDescriptor.fragmentFunction = ffn;
+
+	if (Error != NULL) {
+		[NSException raise: @"Can't setup metal exception"
+			format: @"Unable to setup metal pipeline state"];
+	}
+
     _metalKitView.device           = _metalKitDevice;
     _metalKitView                  = [[MTKView alloc] initWithFrame:_window.contentLayoutRect
 																	device:_metalKitDevice];
