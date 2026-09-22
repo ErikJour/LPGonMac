@@ -44,6 +44,11 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
         id<MTLRenderCommandEncoder> RenderEncoder = [CommandBuffer renderCommandEncoderWithDescriptor:RenderPassDescriptor];
         RenderEncoder.label = @"RenderEncoder";
+
+        //Prepping the render happens here ->
+
+        //===================================
+
         [RenderEncoder setViewport: viewPort];
         [RenderEncoder endEncoding];
 

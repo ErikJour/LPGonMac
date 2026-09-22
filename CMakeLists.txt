@@ -14,6 +14,7 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         main.mm
         mainWindow.h
         mtkViewDelegate.h
+        RenderBuffers.h
 )
 
 #======================================================
