@@ -13,6 +13,7 @@ set(CMAKE_C_STANDARD 11)
 add_executable(HomemadeLPG MACOSX_BUNDLE
         main.mm
         mainWindow.h
+        mtkViewDelegate.h
 )
 
 #======================================================
@@ -25,7 +26,7 @@ target_compile_options(HomemadeLPG PRIVATE
 #======================================================
 set_target_properties(HomemadeLPG PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/AppLifecycle/Info.plist)
+        ${CMAKE_CURRENT_SOURCE_DIR}/info.plist)
 
 target_link_libraries(HomemadeLPG
         PRIVATE
