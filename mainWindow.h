@@ -2,6 +2,7 @@
 #import <MetalKit/MetalKit.h>
 #import "mtkViewDelegate.h"
 #import "RenderBuffers.h"
+#include "GameRenderer.h
 //==============================================================
 @interface
 BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
@@ -23,9 +24,9 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
     NSRect windowRect = NSMakeRect((screenRect.size.width - GLOBAL_WIDTH) * 0.5,
                                    (screenRect.size.height - GLOBAL_HEIGHT) * 0.5,
                                    GLOBAL_WIDTH, GLOBAL_HEIGHT);
-	//==========================================================
+	//=============================================================================
 	//Metal Setup
-	//==========================================================
+	//=============================================================================
 	_metalKitDevice				   = MTLCreateSystemDefaultDevice();
 	_commandQueue				   = [_metalKitDevice newCommandQueue];
 	_metalKitView                  = [[MTKView alloc] initWithFrame:_window.contentLayoutRect
@@ -54,14 +55,29 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 	//============================================================================
     //Buffer Setup
     //============================================================================
+	MacVertexBuffers macVertexBuffers    = {};
+	u32 pageSize                         = GLOBAL_WIDTH * GLOBAL_HEIGHT;
+	u32 vertexBufferSize                 = pageSize * 1000;
 	GameRenderCommands gameRenderCommand = {};
+
 	for (u32 FrameIndex = 0;
 			FrameIndex< 3;
 			FrameIndex++) {
-			gameRenderCommand.vertexBuffer[FrameIndex] = (game_vertex_buffer *)mmap(0, VertexBufferSize, PROT_READ | PROT_WRITE |
-																					MAP_PRIVATE | MAP_ANON, -1, 0);
-			id<MTLBuffer> MacVertexBuffer = [_metalKitView.device newBufferWithBytesNoCopy
-}
+			gameRenderCommand.vertexBuffer[FrameIndex] = (game_vertex_buffer *)mmap(0,
+																					vertexBufferSize,
+																					PROT_READ |
+																					PROT_WRITE |
+																					MAP_PRIVATE |
+																					MAP_ANON,
+																					-1,
+																					0);
+			id<MTLBuffer> MetalVertexBuffer = [_metalKitView.device newBufferWithBytesNoCopy:      vertices,
+																					length:      vertexBufferSize,
+																					options:     MTLResourceStorageModeShared,
+																					deallocator: nil];
+			macVertexBuffers.MetalVertexBuffers[FrameIndex] = FrameIndex;
+
+	}
     //============================================================================
     //Delegate Setup
     //============================================================================

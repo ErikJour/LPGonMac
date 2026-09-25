@@ -1,5 +1,6 @@
 #include <metal_stdlib>
 #include <simd/simd.h>
+#include "../GameRenderer.h"
 
 using namespace metal;
 
@@ -10,11 +11,6 @@ typedef struct {
 
 } RasterizerData;
 
-struct game_vertex
-{
-    float4 position;
-    float4 color;
-};
 
 vertex RasterizerData
 vertexMain(uint vertexID [[ vertex_id ]],

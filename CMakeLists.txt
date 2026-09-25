@@ -15,6 +15,7 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         mainWindow.h
         mtkViewDelegate.h
         RenderBuffers.h
+        GameRenderer.h
 )
 
 #======================================================
@@ -79,8 +80,6 @@ set_source_files_properties(
         GENERATED TRUE
 )
 
-# We compile Metal ourselves above, but still want the .metal
-# file visible/editable inside Xcode.
 set_source_files_properties(
         Shaders/shaders.metal
         PROPERTIES
