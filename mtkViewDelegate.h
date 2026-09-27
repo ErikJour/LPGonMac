@@ -1,13 +1,17 @@
 //
 // Created by Erik Jourgensen on 9/22/26.
 //
+#include "RenderBuffers.h"
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 288
 static const NSUInteger kMaxBuffers = 3;
 //==============================================================
 @interface
 MTKViewDelegate: NSObject <MTKViewDelegate>
-@property id<MTLCommandQueue> commandQueue;
+@property (retain) id<MTLCommandQueue>        commandQueue;
+@property (retain) NSMutableArray*            macVertexBuffers;
+@property (retain) id<MTLRenderPipelineState> pipelineState;
+@property GameRenderCommands                  gameRenderCommands;
 @end
 
 //==============================================================
@@ -44,10 +48,11 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
         id<MTLRenderCommandEncoder> RenderEncoder = [CommandBuffer renderCommandEncoderWithDescriptor:RenderPassDescriptor];
         RenderEncoder.label = @"RenderEncoder";
+//        [RenderEncoder setRenderPipelineState: [self pipelineState]];
+//        [RenderEncoder setVertexBuffer: [self macVertexBuffers] objectAtIndex: [self currentFrameIndex]
+//                                offset: 0
+//                                 atIndex: 0];
 
-        //Prepping the render happens here ->
-
-        //===================================
 
         [RenderEncoder setViewport: viewPort];
         [RenderEncoder endEncoding];

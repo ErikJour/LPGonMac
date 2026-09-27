@@ -1,19 +1,19 @@
 //
 // Created by Erik Jourgensen on 9/22/26.
 //
-#include "GameRenderer.h"
-
 #ifndef HOMEMADELPG_RENDERBUFFERS_H
 #define HOMEMADELPG_RENDERBUFFERS_H
+#include "GameRenderer.h"
+
 
 struct VertexBuffer {
     game_vertex *vertices;
-    u32 drawCount;
+    uint32_t     drawCount;
 };
 
 struct GameRenderCommands {
-    vertexBuffer *VertexBuffer[3];
-    u32 currentFrame;
+    VertexBuffer *vertexBuffer[3];
+    uint32_t      currentFrame;
 };
 
 struct MacVertexBuffers

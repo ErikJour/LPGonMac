@@ -2,7 +2,7 @@
 #import <MetalKit/MetalKit.h>
 #import "mtkViewDelegate.h"
 #import "RenderBuffers.h"
-#include "GameRenderer.h
+#include "GameRenderer.h"
 //==============================================================
 @interface
 BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
@@ -15,7 +15,7 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 	MTKViewDelegate*            _viewDelegate;
 	id<MTLDevice>               _metalKitDevice;
 	id<MTLCommandQueue>         _commandQueue;
-	id<MTLRenderPipelineState>  SolidColorPipelineState;
+	id<MTLRenderPipelineState>  solidColorPipelineState;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note
@@ -55,42 +55,45 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 	//============================================================================
     //Buffer Setup
     //============================================================================
-	MacVertexBuffers macVertexBuffers    = {};
-	u32 pageSize                         = GLOBAL_WIDTH * GLOBAL_HEIGHT;
-	u32 vertexBufferSize                 = pageSize * 1000;
+    VertexBuffer gameVertexBuffer        = {};
+	uint32_t pageSize                    = GLOBAL_WIDTH * GLOBAL_HEIGHT;
+	uint32_t vertexBufferSize            = pageSize * 1000;
 	GameRenderCommands gameRenderCommand = {};
+    NSMutableArray *macVertexBuffers     = [[NSMutableArray alloc] init];
 
-	for (u32 FrameIndex = 0;
-			FrameIndex< 3;
-			FrameIndex++) {
-			gameRenderCommand.vertexBuffer[FrameIndex] = (game_vertex_buffer *)mmap(0,
-																					vertexBufferSize,
-																					PROT_READ |
-																					PROT_WRITE |
-																					MAP_PRIVATE |
-																					MAP_ANON,
-																					-1,
-																					0);
-			id<MTLBuffer> MetalVertexBuffer = [_metalKitView.device newBufferWithBytesNoCopy:      vertices,
-																					length:      vertexBufferSize,
-																					options:     MTLResourceStorageModeShared,
+	for (auto & FrameIndex : gameRenderCommand.vertexBuffer) {
+                gameVertexBuffer.vertices = (game_vertex *)mmap(nullptr,
+                                                            vertexBufferSize,
+                                                            PROT_READ |
+                                                            PROT_WRITE,
+                                                            MAP_PRIVATE |
+                                                            MAP_ANON,
+                                                            -1,
+                                                            0);
+
+			id<MTLBuffer> MetalVertexBuffer = [_metalKitView.device newBufferWithBytesNoCopy: FrameIndex
+																					length:   vertexBufferSize
+																					options:  MTLResourceStorageModeShared
 																					deallocator: nil];
-			macVertexBuffers.MetalVertexBuffers[FrameIndex] = FrameIndex;
+
+            [macVertexBuffers addObject: MetalVertexBuffer];
 
 	}
     //============================================================================
     //Delegate Setup
     //============================================================================
-	 _viewDelegate                 = [[MTKViewDelegate alloc] init];
+    _viewDelegate                    = [[MTKViewDelegate alloc] init];
+    _viewDelegate.macVertexBuffers   = macVertexBuffers;
+    _viewDelegate.gameRenderCommands =  gameRenderCommand;
+    _viewDelegate.pipelineState      = solidColorPipelineState;
 	[_viewDelegate configureMetal];
-
-	_viewDelegate.commandQueue     = _commandQueue;
-	_commandQueue				   = [_metalKitDevice newCommandQueue];
-	_metalKitView.delegate         = _viewDelegate;
+	_viewDelegate.commandQueue       = _commandQueue;
+	_commandQueue				     = [_metalKitDevice newCommandQueue];
+	_metalKitView.delegate           = _viewDelegate;
 	//============================================================================
     // Shader Library & Render Pipeline Setup
     //============================================================================
-	NSError *Error                 = NULL;
+	NSError *Error                 = nullptr;
 
 	NSString *libPath = [NSBundle.mainBundle.resourcePath
                              stringByAppendingPathComponent:@"shaders.metallib"];
@@ -107,14 +110,15 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 	MTLRenderPipelineDescriptor *SolidColorPipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
 	SolidColorPipelineDescriptor.vertexFunction   = vfn;
 	SolidColorPipelineDescriptor.fragmentFunction = ffn;
-	SolidColorPipelineState        = [_metalKitDevice newRenderPipelineStateWithDescriptor: SolidColorPipelineDescriptor
-																							error: &Error];
-	if (!SolidColorPipelineState) {
+    solidColorPipelineState                       = [_metalKitDevice newRenderPipelineStateWithDescriptor:
+                                                     SolidColorPipelineDescriptor
+                                                                                                    error: &Error];
+	if (!solidColorPipelineState) {
         [NSException raise:@"Can't setup metal exception"
                     format:@"Unable to setup metal pipeline state: %@", Error];
     }
 
-	if (Error != NULL) {
+	if (Error != nullptr) {
 		[NSException raise: @"Can't setup metal exception"
 			format: @"Unable to setup metal pipeline state"];
 	}

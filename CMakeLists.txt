@@ -38,7 +38,9 @@ target_link_libraries(HomemadeLPG
         "-framework QuartzCore"
         "-framework AVFoundation"
         "-framework CoreVideo"
-        "-framework CoreMedia")
+        "-framework CoreMedia"
+        "-framework AudioToolbox"
+)
 
 #=========================================================
 #Metal
