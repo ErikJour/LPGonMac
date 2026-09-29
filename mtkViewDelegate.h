@@ -35,7 +35,15 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 {
     dispatch_semaphore_wait(_frameBoundarySemaphore, DISPATCH_TIME_FOREVER);
 
-    MTLViewport viewPort = { 0, 0, GLOBAL_WIDTH, GLOBAL_HEIGHT };
+    uint32_t frameIndex = _currentFrameIndex;
+
+    game_vertex *vertices = self.gameRenderCommands.vertexBuffer[frameIndex]->vertices;
+    //==========
+    //Triangle
+    //==========
+    vertices[0] = { { 0.0f, 1.0f, 0.0f, 1.0f }, {0.0f, 0.0f, 1.0f, 1.0f }  };
+    vertices[1] = { { -1.0f, -1.0f, 0.0f, 1.0f }, {0.0f, 1.0f, 0.0f, 1.0f }  };
+    vertices[2] = { { 1.0f, -1.0f, 0.0f, 1.0f }, {1.0f, 0.0f, 0.0f, 1.0f }  };
 
     @autoreleasepool{
 
@@ -43,22 +51,40 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
         MTLRenderPassDescriptor *RenderPassDescriptor       = [view currentRenderPassDescriptor];
         RenderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-        MTLClearColor MetalClearColor                       = MTLClearColorMake(0.0f, 255.0f, 0.0f, 1.0f);
-        RenderPassDescriptor.colorAttachments[0].clearColor = MetalClearColor;
+        RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.1f, 0.1f, 0.1f, 1.0f);
 
         id<MTLRenderCommandEncoder> RenderEncoder = [CommandBuffer renderCommandEncoderWithDescriptor:RenderPassDescriptor];
         RenderEncoder.label = @"RenderEncoder";
-//        [RenderEncoder setRenderPipelineState: [self pipelineState]];
-//        [RenderEncoder setVertexBuffer: [self macVertexBuffers] objectAtIndex: [self currentFrameIndex]
-//                                offset: 0
-//                                 atIndex: 0];
 
+        // Viewport using actual drawable size
+        CGSize drawableSize = view.drawableSize;
+        MTLViewport viewPort = { 0.0, 0.0, drawableSize.width, drawableSize.height, 0.0, 1.0 };
+        [RenderEncoder setViewport: viewPort];
+
+        [RenderEncoder setRenderPipelineState: [self pipelineState]];
+        [RenderEncoder setVertexBuffer: [[self macVertexBuffers] objectAtIndex: _currentFrameIndex]
+                                offset: 0
+                                 atIndex: 0];
 
         [RenderEncoder setViewport: viewPort];
+
+        [RenderEncoder drawPrimitives: MTLPrimitiveTypeTriangle
+                          vertexStart: 0
+                          vertexCount: 3];
+
+
         [RenderEncoder endEncoding];
 
         id<CAMetalDrawable> NextDrawable = [view currentDrawable];
         [CommandBuffer presentDrawable:NextDrawable];
+
+        uint32_t nextIndex = _currentFrameIndex + 1;
+        if (nextIndex > 2) {
+            nextIndex = 0;
+        }
+
+        _currentFrameIndex = nextIndex;
+
 
         __block dispatch_semaphore_t semaphore = _frameBoundarySemaphore;
 

@@ -16,6 +16,8 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         mtkViewDelegate.h
         RenderBuffers.h
         GameRenderer.h
+        Audio/AudioFileMetaData.h
+        Audio/Ch2_SquareWave.h
 )
 
 #======================================================

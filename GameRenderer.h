@@ -6,7 +6,7 @@
 
 struct game_vertex
 {
-    simd_float4 position;
-    simd_float4 color;
+    vector_float4 position;
+    vector_float4 color;
 };
 
