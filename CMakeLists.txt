@@ -18,6 +18,9 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         GameRenderer.h
         Audio/AudioFileMetaData.h
         Audio/Ch2_SquareWave.h
+        Geometries/SquareGeo.h
+        Geometries/TriangleGeo.h
+        Audio/Ch2_SawtoothWave.h
 )
 
 #======================================================

@@ -18,7 +18,9 @@ vertexMain(uint vertexID [[ vertex_id ]],
 {
     RasterizerData out;
     float2 pixelSpacePosition = vertexArray[vertexID].position.xy;
-    out.position              = vector_float4(pixelSpacePosition.x, pixelSpacePosition.y, 0.0, 1.0);
+    float2 normalizedPosition = (pixelSpacePosition / (512. / 2.0)) - 1;
+
+    out.position              = vector_float4(normalizedPosition.x, normalizedPosition.y, 0.0, 1.0);
     out.color                 = vertexArray[vertexID].color;
 
     return out;

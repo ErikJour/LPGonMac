@@ -1,7 +1,7 @@
 #import <AppKit/AppKit.h>
 #import "mainWindow.h"
 #import "Audio/Ch2_SquareWave.h"
-
+#import "Audio/Ch2_SawtoothWave.h"
 //===========================================================
 //Main Loop
 //===========================================================
@@ -12,7 +12,8 @@ int main(int argc, const char *argv[])
     NSApplication *app = [NSApplication sharedApplication];
     btWindowDelegate   = [[BtWindowDel alloc] init];
     app.delegate       = btWindowDelegate;
-    char buf[]         = "/Users/erikjourgensen/Desktop/132586__rob10__kick-drum-f.wav";
+    sawToothWave();
+//    char buf[]         = "/Users/erikjourgensen/Desktop/132586__rob10__kick-drum-f.wav";
 //    char *bufPointer   = buf;
 //    audioFunc( buf);
 

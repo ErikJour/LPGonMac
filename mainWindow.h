@@ -48,7 +48,7 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 
     _window.releasedWhenClosed    = NO;
     _window.minSize               = NSMakeSize(GLOBAL_WIDTH, GLOBAL_HEIGHT);
-	_window.backgroundColor = [NSColor blackColor];
+	_window.backgroundColor       = [NSColor blackColor];
     _window.title                 = @"Animated LPG";
     _window.delegate              = self;
 	_window.contentView           = _metalKitView;
@@ -89,8 +89,8 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
     //Buffer Setup
     //============================================================================
     VertexBuffer gameVertexBuffer        = {};
-	uint32_t pageSize         			= GLOBAL_WIDTH * GLOBAL_HEIGHT;
-	uint32_t vertexBufferSize 			= pageSize * sizeof(game_vertex); // Size by struct count, not magic 1000 multiplier
+	uint32_t pageSize         			 = GLOBAL_WIDTH * GLOBAL_HEIGHT;
+	uint32_t vertexBufferSize 			 = pageSize * sizeof(game_vertex); // Size by struct count, not magic 1000 multiplier
 	GameRenderCommands gameRenderCommand = {};
     NSMutableArray *macVertexBuffers     = [[NSMutableArray alloc] init];
 

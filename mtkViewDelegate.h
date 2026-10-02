@@ -2,8 +2,11 @@
 // Created by Erik Jourgensen on 9/22/26.
 //
 #include "RenderBuffers.h"
+#import "Geometries/SquareGeo.h"
+#import "Geometries/TriangleGeo.h"
+
 #define GLOBAL_WIDTH  512
-#define GLOBAL_HEIGHT 288
+#define GLOBAL_HEIGHT 512
 static const NSUInteger kMaxBuffers = 3;
 //==============================================================
 @interface
@@ -35,15 +38,29 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 {
     dispatch_semaphore_wait(_frameBoundarySemaphore, DISPATCH_TIME_FOREVER);
 
-    uint32_t frameIndex = _currentFrameIndex;
+    uint32_t frameIndex   = _currentFrameIndex;
+
+    uint32_t vertexCount = 0;
 
     game_vertex *vertices = self.gameRenderCommands.vertexBuffer[frameIndex]->vertices;
-    //==========
-    //Triangle
-    //==========
-    vertices[0] = { { 0.0f, 1.0f, 0.0f, 1.0f }, {0.0f, 0.0f, 1.0f, 1.0f }  };
-    vertices[1] = { { -1.0f, -1.0f, 0.0f, 1.0f }, {0.0f, 1.0f, 0.0f, 1.0f }  };
-    vertices[2] = { { 1.0f, -1.0f, 0.0f, 1.0f }, {1.0f, 0.0f, 0.0f, 1.0f }  };
+
+    vector_float4 blue    = { 0.0f, 0.0f, 1.0f, 1.0f };
+    vector_float4 red     = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+    drawSquare(vertices,
+               &vertexCount,
+               64,
+               blue,
+               -120,
+               250);
+
+    drawSquare(vertices,
+               &vertexCount,
+               35,
+               red,
+               100,
+               0);
+
 
     @autoreleasepool{
 
@@ -70,7 +87,7 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
         [RenderEncoder drawPrimitives: MTLPrimitiveTypeTriangle
                           vertexStart: 0
-                          vertexCount: 3];
+                          vertexCount: vertexCount];
 
 
         [RenderEncoder endEncoding];
@@ -84,7 +101,6 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
         }
 
         _currentFrameIndex = nextIndex;
-
 
         __block dispatch_semaphore_t semaphore = _frameBoundarySemaphore;
 
