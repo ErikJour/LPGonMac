@@ -12,10 +12,6 @@ int main(int argc, const char *argv[])
     NSApplication *app = [NSApplication sharedApplication];
     btWindowDelegate   = [[BtWindowDel alloc] init];
     app.delegate       = btWindowDelegate;
-    sawToothWave();
-//    char buf[]         = "/Users/erikjourgensen/Desktop/132586__rob10__kick-drum-f.wav";
-//    char *bufPointer   = buf;
-//    audioFunc( buf);
 
     return NSApplicationMain(argc, argv);
 }

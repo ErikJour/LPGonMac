@@ -46,6 +46,7 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
     vector_float4 blue    = { 0.0f, 0.0f, 1.0f, 1.0f };
     vector_float4 red     = { 1.0f, 0.0f, 0.0f, 1.0f };
+    vector_float4 green   = { 0.0f, 1.0f, 0.0f, 1.0f };
 
     drawSquare(vertices,
                &vertexCount,
@@ -59,6 +60,13 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
                35,
                red,
                100,
+               0);
+
+    drawSquare(vertices,
+               &vertexCount,
+               100,
+               green,
+               300,
                0);
 
 
