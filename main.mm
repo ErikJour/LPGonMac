@@ -15,8 +15,9 @@ typedef struct MyRecorder {
     SInt64      recordPacket;
     Boolean     running;
 } MyRecorder;
-
+//===========================================================
 //Utility functions
+//===========================================================
 static void checkError(OSStatus error, const char* operation)
 {
     if (error == noErr) return;
@@ -48,11 +49,98 @@ OSStatus MyGetDefaultInputDeviceSampleRate(Float64 *outSampleRate) {
                                                 nullptr,
                                                 &propertySize,
                                                 &deviceID);
+    if (error) return error;
+    propertyAddress.mSelector = kAudioDevicePropertyNominalSampleRate;
+    propertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
+    propertyAddress.mElement = 0;
+    propertySize = sizeof(Float64);
+    error = AudioHardwareServiceGetPropertyData(deviceID,
+                                                &propertyAddress,
+                                                0,
+                                                nullptr,
+                                                &propertySize,
+                                                outSampleRate);
+    return error;
+}
 
+static int MyComputeRecordBufferSize(const AudioStreamBasicDescription *format, AudioQueueRef queue, float seconds) {
+    int packets, frames, bytes;
+    frames = (int)ceil(seconds * format->mSampleRate);
+
+    if (format->mBytesPerFrame > 0)
+        bytes = frames * format->mBytesPerFrame;
+    else {
+        UInt32 maxPacketSize;
+        if (format->mBytesPerPacket > 0 )
+            maxPacketSize = format->mBytesPerPacket;
+        else {
+            UInt32 propertySize = sizeof(maxPacketSize);
+            checkError(AudioQueueGetProperty(queue,
+                                             kAudioConverterPropertyMaximumOutputPacketSize,
+                                             &maxPacketSize,
+                                             &propertySize),
+                       "Could not get queue's maximum output packet size");
+        }
+        if (format->mFramesPerPacket > 0)
+            packets = frames / format->mFramesPerPacket;
+        else
+            packets = frames;
+
+        if (packets == 0)
+            packets = 1;
+        bytes = packets * maxPacketSize;
+    }
+    return bytes;
+}
+static void MyCopyEncoderCookieToFile(AudioQueueRef queue, AudioFileID theFile) {
+    OSStatus error;
+    UInt32 propertySize;
+    error = AudioQueueGetPropertySize(queue,
+                                      kAudioConverterCompressionMagicCookie,
+                                      &propertySize);
+    if (error == noErr && propertySize > 0) {
+        Byte *magicCookie = (Byte *) malloc(propertySize);
+        checkError(AudioQueueGetProperty(queue, kAudioQueueProperty_MagicCookie,
+                                         magicCookie,
+                                         &propertySize),
+                   "Could not get audio file's magic cookie");
+        checkError(AudioFileSetProperty(theFile,
+                                        kAudioFilePropertyMagicCookieData,
+                                        propertySize,
+                                        magicCookie),
+                   "Could not set audio file's magic cookie");
+        free(magicCookie);
+    }
 };
-static int MyComputeRecordBufferSize(const AudioStreamBasicDescription *format, AudioQueueRef queue, float seconds) {};
-static void MyCopyEncoderCookieToFile(AudioQueueRef queue, AudioFileID theFile) {};
 //Callback function
+static void MYAQInputCallback(void *inUserData,
+                              AudioQueueRef inQueue,
+                              AudioQueueBufferRef inBuffer,
+                              const AudioTimeStamp *inStartTime,
+                              UInt32 inNumPackets,
+                              const AudioStreamPacketDescription *inPacketDesc)
+{
+    auto *recorder = (MyRecorder *)inUserData; //Cast userData to MyRecorder struct
+    if (inNumPackets > 0) {
+        checkError(AudioFileWritePackets(recorder->recordFile,
+                                         FALSE,
+                                         inBuffer->mAudioDataByteSize,
+                                         inPacketDesc,
+                                         recorder->recordPacket,
+                                         &inNumPackets,
+                                         inBuffer->mAudioData),
+                   "AudioFileWritePackets failed");
+        recorder->recordPacket += inNumPackets;
+    }
+    if (recorder->running)
+        checkError(AudioQueueEnqueueBuffer(inQueue,
+                                           inBuffer,
+                                           0,
+                                           nullptr),
+                   "AudioQueueEnqueueBuffer failed");
+
+}
+
 
 //===========================================================
 //Main Loop
@@ -83,8 +171,9 @@ int main(int argc, const char *argv[])
     //set up queue
     //==================================================
     AudioQueueRef queue = nullptr;
+
     checkError(AudioQueueNewInput(&recordFormat,
-                                  /*MyAQInputCallback*/,
+                                  MYAQInputCallback,
                                   &recorder,
                                   NULL,
                                   NULL,
