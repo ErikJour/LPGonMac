@@ -1,0 +1,8 @@
+//
+// Created by Erik Jourgensen on 10/5/26.
+//
+
+#ifndef HOMEMADELPG_CH4_RECORDING_H
+#define HOMEMADELPG_CH4_RECORDING_H
+
+#endif //HOMEMADELPG_CH4_RECORDING_H
