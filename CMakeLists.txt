@@ -21,8 +21,9 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         Geometries/SquareGeo.h
         Geometries/TriangleGeo.h
         Audio/Experiments/Ch2_SawtoothWave.h
-        Audio/Experiments/Ch3_Recording.h
         Audio/Experiments/Ch4_Recording.h
+        Audio/AudioUtilities.h
+        Audio/Experiments/Ch7_RenderingAudio.h
 )
 
 #======================================================

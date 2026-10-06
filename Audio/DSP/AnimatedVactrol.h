@@ -1,8 +1,5 @@
 //
-// Created by Erik Jourgensen on 6/4/26.
-#ifndef ANIMATEDNOISE_ANIMATEDVACTROL_H
-#define ANIMATEDNOISE_ANIMATEDVACTROL_H
-
+#pragma once
 #include <algorithm>
 #include <cmath>
 
@@ -89,4 +86,3 @@ class AnimatedVactrol
         }
 };
 
-#endif //ANIMATEDNOISE_ANIMATEDVACTROL_H

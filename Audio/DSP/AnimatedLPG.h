@@ -1,9 +1,3 @@
-//
-// Created by Erik Jourgensen on 6/4/26.
-//
-
-#ifndef ANIMATEDNOISE_ANIMATEDLPG_H
-#define ANIMATEDNOISE_ANIMATEDLPG_H
 #include <algorithm>
 
 class AnimatedLPG
@@ -15,8 +9,8 @@ class AnimatedLPG
         {
             mSampleRate = static_cast<float>(sampleRate);
             Rf = 1e3f;
-            resonanceSmoothed.reset(sampleRate, 0.01f);
-            resonanceSmoothed.setCurrentAndTargetValue(0.5f);
+//            resonanceSmoothed.reset(sampleRate, 0.01f);
+//            resonanceSmoothed.setCurrentAndTargetValue(0.5f);
             reset();
         }
 
@@ -37,14 +31,14 @@ class AnimatedLPG
 
         void setResonance(const float newResonance)
         {
-            resonanceSmoothed.setTargetValue(newResonance);
+//            resonanceSmoothed.setTargetValue(newResonance);
         }
 
         void updateResonance()
         {
-            float resonance = resonanceSmoothed.getNextValue();
-            resonance = std::clamp(resonance, 0.0f, maxResonance);
-            a = (C3 > 0.0f) ? resonance * getAmax() : 0.0f;
+//            float resonance = resonanceSmoothed.getNextValue();
+//            resonance = std::clamp(resonance, 0.0f, maxResonance);
+//            a = (C3 > 0.0f) ? resonance * getAmax() : 0.0f;
         }
 
         [[nodiscard]] float getAmax() const
@@ -156,10 +150,9 @@ class AnimatedLPG
         float sDiff = 0.0f;
         Mode mMode = Mode::LowPass;
 
-        juce::SmoothedValue<float> resonanceSmoothed;
+//        juce::SmoothedValue<float> resonanceSmoothed;
 
         static constexpr float maxResonance = 0.95f;
 
 };
 
-#endif //ANIMATEDNOISE_ANIMATEDLPG_H
