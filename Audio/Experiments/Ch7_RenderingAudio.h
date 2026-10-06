@@ -13,17 +13,8 @@ typedef struct MySineWavePlayer
     double startingFrameCount; //Phase
 } MySineWavePlayer;
 
-//============================================
-//Render callback for sine wave
-//============================================
-OSStatus SineWaveRenderProc(void *inRefCon,
-                            AudioUnitRenderActionFlags *ioActionFlags,
-                            const AudioTimeStamp *inTimeStamp,
-                            UInt32 inBusNumber,
-                            UInt32 inNumberFrames,
-                            AudioBufferList *ioData)
+void generateSine(MySineWavePlayer *player, AudioBufferList *ioData, UInt32 inNumberFrames)
 {
-    MySineWavePlayer *player = (MySineWavePlayer*) inRefCon;
     double j                 = player->startingFrameCount;
     double cycleLength       = 44100. / sineFrequency;
     int frame                = 0;
@@ -41,6 +32,25 @@ OSStatus SineWaveRenderProc(void *inRefCon,
         if (j > cycleLength) { j -= cycleLength; }
     }
     player->startingFrameCount = j;
+}
+
+//============================================
+//Render callback for sine wave
+//============================================
+OSStatus processBlock(void *inRefCon,
+                            AudioUnitRenderActionFlags *ioActionFlags,
+                            const AudioTimeStamp *inTimeStamp,
+                            UInt32 inBusNumber,
+                            UInt32 inNumberFrames,
+                            AudioBufferList *ioData)
+{
+    MySineWavePlayer *player = (MySineWavePlayer*) inRefCon;
+
+    generateSine(player, ioData, inNumberFrames);
+    //applyGain
+    //applyFilter
+    //etc
+
     return noErr;
 }
 
@@ -71,7 +81,7 @@ void CreateAndConnectOutputUnit(MySineWavePlayer *player)
     //Third, register the render callback
     //============================================
     AURenderCallbackStruct input;
-    input.inputProc       = SineWaveRenderProc;
+    input.inputProc       = processBlock;
     input.inputProcRefCon = &player;
     checkError(AudioUnitSetProperty(player->outputUnit,
                                     kAudioUnitProperty_SetRenderCallback,
@@ -107,6 +117,5 @@ void renderAudio()
     AudioOutputUnitStop(sineWavePlayer.outputUnit);
     AudioUnitUninitialize(sineWavePlayer.outputUnit);
     AudioComponentInstanceDispose(sineWavePlayer.outputUnit);
-
 }
 
