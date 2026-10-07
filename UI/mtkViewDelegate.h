@@ -4,6 +4,8 @@
 #include "RenderBuffers.h"
 #import "../Geometries/SquareGeo.h"
 #import "../Geometries/TriangleGeo.h"
+#import "Common.h"
+#import "../Audio/AudioTypes.h"
 
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 512
@@ -15,6 +17,8 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 @property (retain) NSMutableArray*            macVertexBuffers;
 @property (retain) id<MTLRenderPipelineState> pipelineState;
 @property GameRenderCommands                  gameRenderCommands;
+@property Uniforms                            uniforms;
+@property (nonatomic, assign) MyRenderer      *audioRenderer;
 @end
 
 //==============================================================
@@ -43,6 +47,8 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
     uint32_t vertexCount = 0;
 
     game_vertex *vertices = self.gameRenderCommands.vertexBuffer[frameIndex]->vertices;
+
+
 
     vector_float4 blue    = { 0.0f, 0.0f, 1.0f, 1.0f };
     vector_float4 red     = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -90,6 +96,15 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
         [RenderEncoder setVertexBuffer: [[self macVertexBuffers] objectAtIndex: _currentFrameIndex]
                                 offset: 0
                                  atIndex: 0];
+
+        // ==============================================
+        // PASS UNIFORMS TO FRAGMENT SHADER AT INDEX 11
+        // ==============================================
+        _uniforms.audioData     = _audioRenderer->outputData;
+
+        [RenderEncoder setFragmentBytes:&_uniforms
+                                 length:sizeof(Uniforms)
+                                atIndex:11];
 
         [RenderEncoder setViewport: viewPort];
 

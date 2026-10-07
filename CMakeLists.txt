@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 4.0)
 
 project(HomemadeLPG
         LANGUAGES
@@ -22,6 +22,7 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         Audio/AudioRenderer.h
         Audio/DSP/TestToneGenerator.h
         Audio/AudioTypes.h
+        UI/Common.h
 )
 
 #======================================================

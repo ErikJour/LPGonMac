@@ -19,12 +19,12 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 	id<MTLDevice>               _metalKitDevice;
 	id<MTLCommandQueue>         _commandQueue;
 	id<MTLRenderPipelineState>  solidColorPipelineState;
-	MyRenderer                  _myRenderer;
+	MyRenderer                  _myAudioRenderer;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note
 {
-	renderAudio(&_myRenderer);
+	renderAudio(&_myAudioRenderer);
 
     NSRect screenRect = [[NSScreen mainScreen] frame];
     NSRect windowRect = NSMakeRect((screenRect.size.width - GLOBAL_WIDTH) * 0.5,
@@ -132,6 +132,7 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
     _viewDelegate.macVertexBuffers   = macVertexBuffers;
     _viewDelegate.gameRenderCommands = gameRenderCommand;
     _viewDelegate.pipelineState      = solidColorPipelineState;
+	_viewDelegate.audioRenderer      = &_myAudioRenderer;
 	[_viewDelegate configureMetal];
 	_viewDelegate.commandQueue       = _commandQueue;
 	_commandQueue				     = [_metalKitDevice newCommandQueue];
@@ -151,7 +152,7 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
-	stopAudio(&_myRenderer);
+	stopAudio(&_myAudioRenderer);
 
 	return YES;
 }

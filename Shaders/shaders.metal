@@ -1,6 +1,7 @@
 #include <metal_stdlib>
 #include <simd/simd.h>
-#include "../GameRenderer.h"
+#include "../UI/GameRenderer.h"
+#include "../UI/Common.h"
 
 using namespace metal;
 
@@ -26,7 +27,9 @@ vertexMain(uint vertexID [[ vertex_id ]],
     return out;
 }
 
-fragment float4 fragmentMain(RasterizerData in [[stage_in]])
+fragment float4 fragmentMain(
+        RasterizerData in [[stage_in]],
+        constant Uniforms &uniforms [[buffer(11)]])
 {
-return in.color * 0.5;
+return in.color * 0.5 * uniforms.audioData;
 }

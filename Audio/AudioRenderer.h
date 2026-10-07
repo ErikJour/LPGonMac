@@ -21,7 +21,6 @@ OSStatus processBlock(void *inRefCon,
     auto *renderer = (MyRenderer*) inRefCon; //This might be an issue
 
     generateTestTone(renderer, ioData, inNumberFrames);
-    std::cout << renderer->outputData << std::endl;
     //applyGain
     //applyFilter
     //etc
@@ -74,12 +73,13 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
 //==========================================
 void renderAudio(MyRenderer* renderer)
 {
-    *renderer = { nullptr };
+    renderer->outputUnit = nullptr;
+    renderer->startingFrameCount = 0.0;
+    renderer->outputData.store(0.0f, std::memory_order_relaxed);
     //============================
     //Callback function
     //============================
     CreateAndConnectOutputUnit(renderer); //Callback function, good here
-    printf("Hi erik");
     //============================
     //Start playback
     //============================
