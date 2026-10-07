@@ -12,10 +12,10 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(HomemadeLPG MACOSX_BUNDLE
         main.mm
-        mainWindow.h
-        mtkViewDelegate.h
-        RenderBuffers.h
-        GameRenderer.h
+        UI/mainWindow.h
+        UI/mtkViewDelegate.h
+        UI/RenderBuffers.h
+        UI/GameRenderer.h
         Geometries/SquareGeo.h
         Geometries/TriangleGeo.h
         Audio/AudioUtilities.h

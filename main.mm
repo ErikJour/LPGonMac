@@ -1,5 +1,5 @@
 #import <AppKit/AppKit.h>
-#import "mainWindow.h"
+#import "UI/mainWindow.h"
 
 //===========================================================
 //Main Loop

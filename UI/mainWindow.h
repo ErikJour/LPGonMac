@@ -3,7 +3,8 @@
 #import "mtkViewDelegate.h"
 #import "RenderBuffers.h"
 #include "GameRenderer.h"
-#import "Audio/AudioRenderer.h"
+#import "../Audio/AudioRenderer.h"
+#include <iostream>
 
 //==============================================================
 @interface
@@ -24,6 +25,7 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 - (void)applicationDidFinishLaunching:(NSNotification *)note
 {
 	renderAudio(&_myRenderer);
+
     NSRect screenRect = [[NSScreen mainScreen] frame];
     NSRect windowRect = NSMakeRect((screenRect.size.width - GLOBAL_WIDTH) * 0.5,
                                    (screenRect.size.height - GLOBAL_HEIGHT) * 0.5,
@@ -149,11 +151,10 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
-    return YES;
+	stopAudio(&_myRenderer);
+
+	return YES;
 }
 
-- (void)applicationWillTerminate:(NSNotification *)note
-{
-	stopAudio(&_myRenderer);
-}
+
 @end

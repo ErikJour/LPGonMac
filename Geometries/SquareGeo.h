@@ -5,8 +5,8 @@
 #ifndef HOMEMADELPG_SQUAREGEO_H
 #define HOMEMADELPG_SQUAREGEO_H
 
-#include "../RenderBuffers.h"
-#include "../mtkViewDelegate.h"
+#include "../UI/RenderBuffers.h"
+#include "../UI/mtkViewDelegate.h"
 
 void drawSquare (game_vertex *vertices, uint32_t *vertexCount, uint32_t side, vector_float4 color, uint32_t offsetX, uint32_t offsetY)
 {

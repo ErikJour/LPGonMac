@@ -18,9 +18,10 @@ OSStatus processBlock(void *inRefCon,
                       UInt32 inNumberFrames,
                       AudioBufferList *ioData)
 {
-    MyRenderer *player = (MyRenderer*) inRefCon; //This might be an issue
+    auto *renderer = (MyRenderer*) inRefCon; //This might be an issue
 
-    generateTestTone(player, ioData, inNumberFrames);
+    generateTestTone(renderer, ioData, inNumberFrames);
+    std::cout << renderer->outputData << std::endl;
     //applyGain
     //applyFilter
     //etc
@@ -31,7 +32,7 @@ OSStatus processBlock(void *inRefCon,
 //============================================
 //Function for creating an output audio unit
 //============================================
-void CreateAndConnectOutputUnit(MyRenderer *player)
+void CreateAndConnectOutputUnit(MyRenderer *renderer)
 {
     //============================================
     //First, define the output component
@@ -49,47 +50,52 @@ void CreateAndConnectOutputUnit(MyRenderer *player)
         exit (-1);
     }
 
-    checkError(AudioComponentInstanceNew(comp, &player->outputUnit),
+    checkError(AudioComponentInstanceNew(comp, &renderer->outputUnit),
                "Could not open component for output unit");
     //============================================
     //Third, register the render callback
     //============================================
     AURenderCallbackStruct input;
     input.inputProc       = processBlock;
-    input.inputProcRefCon = player;
-    checkError(AudioUnitSetProperty(player->outputUnit,
+    input.inputProcRefCon = renderer;
+    checkError(AudioUnitSetProperty(renderer->outputUnit,
                                     kAudioUnitProperty_SetRenderCallback,
                                     kAudioUnitScope_Input,
                                     0,
                                     &input,
                                     sizeof(input)),
                "AudioUnitSetProperty failed");
-    checkError (AudioUnitInitialize(player->outputUnit),
+    checkError (AudioUnitInitialize(renderer->outputUnit),
                 "Could not initialize output unit");
 }
 
 //==========================================
 //Render function to place in main
 //==========================================
-void renderAudio(MyRenderer* sineWavePlayer)
+void renderAudio(MyRenderer* renderer)
 {
-    *sineWavePlayer = {0};
+    *renderer = { nullptr };
     //============================
     //Callback function
     //============================
-    CreateAndConnectOutputUnit(sineWavePlayer); //Callback function, good here
+    CreateAndConnectOutputUnit(renderer); //Callback function, good here
     printf("Hi erik");
     //============================
     //Start playback
     //============================
-    checkError(AudioOutputUnitStart(sineWavePlayer->outputUnit),
+    checkError(AudioOutputUnitStart(renderer->outputUnit),
                "Could not start output unit");
 }
 
-void stopAudio(MyRenderer* player)
+void stopAudio(MyRenderer* renderer)
 {
     printf("Stopping");
-    AudioOutputUnitStop(player->outputUnit);
-    AudioUnitUninitialize(player->outputUnit);
-    AudioComponentInstanceDispose(player->outputUnit);
+    AudioOutputUnitStop(renderer->outputUnit);
+    AudioUnitUninitialize(renderer->outputUnit);
+    AudioComponentInstanceDispose(renderer->outputUnit);
+}
+
+void getData(MyRenderer* renderer)
+{
+    std::cout << &renderer->outputData << std::endl;
 }

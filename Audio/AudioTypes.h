@@ -9,5 +9,6 @@
 typedef struct MyRenderer
 {
     AudioUnit outputUnit;
-    double startingFrameCount;
+    double    startingFrameCount;
+    float     outputData;
 } MyRenderer;

@@ -2,8 +2,8 @@
 // Created by Erik Jourgensen on 9/22/26.
 //
 #include "RenderBuffers.h"
-#import "Geometries/SquareGeo.h"
-#import "Geometries/TriangleGeo.h"
+#import "../Geometries/SquareGeo.h"
+#import "../Geometries/TriangleGeo.h"
 
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 512

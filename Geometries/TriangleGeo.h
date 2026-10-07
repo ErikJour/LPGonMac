@@ -5,7 +5,7 @@
 #ifndef HOMEMADELPG_TRIANGLEGEO_H
 #define HOMEMADELPG_TRIANGLEGEO_H
 
-#include "../RenderBuffers.h"
+#include "../UI/RenderBuffers.h"
 
 void createTriangle (game_vertex *vertices)
 {
