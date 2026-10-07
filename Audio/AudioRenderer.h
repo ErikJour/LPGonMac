@@ -6,6 +6,7 @@
 #include "AudioToolBox/AudioToolBox.h"
 #include "AudioUtilities.h"
 #include "DSP/TestToneGenerator.h"
+#include "DSP/AnimatedGain.h"
 #include "AudioTypes.h"
 
 //============================================
@@ -21,9 +22,7 @@ OSStatus processBlock(void *inRefCon,
     auto *renderer = (MyRenderer*) inRefCon; //This might be an issue
 
     generateTestTone(renderer, ioData, inNumberFrames);
-    //applyGain
-    //applyFilter
-    //etc
+    processGain(renderer, ioData, inNumberFrames);
 
     return noErr;
 }

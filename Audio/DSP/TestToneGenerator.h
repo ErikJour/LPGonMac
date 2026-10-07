@@ -35,5 +35,4 @@ inline void generateTestTone(MyRenderer *renderer, AudioBufferList *ioData, UInt
     float current = renderer->outputData.load(std::memory_order_relaxed);
     renderer->outputData.store(current, std::memory_order_relaxed);
 
-
 }

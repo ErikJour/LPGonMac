@@ -48,8 +48,6 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
     game_vertex *vertices = self.gameRenderCommands.vertexBuffer[frameIndex]->vertices;
 
-
-
     vector_float4 blue    = { 0.0f, 0.0f, 1.0f, 1.0f };
     vector_float4 red     = { 1.0f, 0.0f, 0.0f, 1.0f };
     vector_float4 green   = { 0.0f, 1.0f, 0.0f, 1.0f };
@@ -59,21 +57,15 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
                64,
                blue,
                -120,
-               250);
+               120);
 
     drawSquare(vertices,
                &vertexCount,
-               35,
+               64,
                red,
-               100,
-               0);
+               120,
+               120);
 
-    drawSquare(vertices,
-               &vertexCount,
-               100,
-               green,
-               300,
-               0);
 
 
     @autoreleasepool{
