@@ -3,6 +3,8 @@
 #import "mtkViewDelegate.h"
 #import "RenderBuffers.h"
 #include "GameRenderer.h"
+#import "Audio/AudioRenderer.h"
+
 //==============================================================
 @interface
 BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
@@ -16,10 +18,12 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 	id<MTLDevice>               _metalKitDevice;
 	id<MTLCommandQueue>         _commandQueue;
 	id<MTLRenderPipelineState>  solidColorPipelineState;
+	MyRenderer                  _myRenderer;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note
 {
+	renderAudio(&_myRenderer);
     NSRect screenRect = [[NSScreen mainScreen] frame];
     NSRect windowRect = NSMakeRect((screenRect.size.width - GLOBAL_WIDTH) * 0.5,
                                    (screenRect.size.height - GLOBAL_HEIGHT) * 0.5,
@@ -146,5 +150,10 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
     return YES;
+}
+
+- (void)applicationWillTerminate:(NSNotification *)note
+{
+	stopAudio(&_myRenderer);
 }
 @end

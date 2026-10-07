@@ -16,14 +16,12 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         mtkViewDelegate.h
         RenderBuffers.h
         GameRenderer.h
-        Audio/Experiments/AudioFileMetaData.h
-        Audio/Experiments/Ch2_SquareWave.h
         Geometries/SquareGeo.h
         Geometries/TriangleGeo.h
-        Audio/Experiments/Ch2_SawtoothWave.h
-        Audio/Experiments/Ch4_Recording.h
         Audio/AudioUtilities.h
-        Audio/Experiments/Ch7_RenderingAudio.h
+        Audio/AudioRenderer.h
+        Audio/DSP/TestToneGenerator.h
+        Audio/AudioTypes.h
 )
 
 #======================================================
@@ -96,3 +94,17 @@ set_source_files_properties(
         HEADER_FILE_ONLY TRUE
 )
 
+option(ENABLE_ASAN "Build with AddressSanitizer" OFF)
+option(ENABLE_TSAN "Build with ThreadSanitizer" OFF)
+
+if (ENABLE_ASAN AND ENABLE_TSAN)
+    message(FATAL_ERROR "ASan and TSan can't be enabled together")
+endif()
+
+if (ENABLE_ASAN)
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer -g)
+    add_link_options(-fsanitize=address)
+elseif (ENABLE_TSAN)
+    add_compile_options(-fsanitize=thread -g)
+    add_link_options(-fsanitize=thread)
+endif()

@@ -1,52 +1,26 @@
 //
-// Created by Erik Jourgensen on 10/6/26.
+// Created by Erik Jourgensen on 10/7/26.
 //
 
 #pragma once
 #include "AudioToolBox/AudioToolBox.h"
-#include "../AudioUtilities.h"
-#define sineFrequency 880.0
-
-typedef struct MySineWavePlayer
-{
-    AudioUnit outputUnit; //Output
-    double startingFrameCount; //Phase
-} MySineWavePlayer;
-
-void generateSine(MySineWavePlayer *player, AudioBufferList *ioData, UInt32 inNumberFrames)
-{
-    double j                 = player->startingFrameCount;
-    double cycleLength       = 44100. / sineFrequency;
-    int frame                = 0;
-    //Iterate over samples and fill each inside a buffer
-    for (frame = 0; frame < inNumberFrames; ++frame)
-    {
-        //Fill left channel
-        Float32 *data = (Float32*)ioData->mBuffers[0].mData;
-        (data)[frame] = (Float32)sin (2 * M_PI * (j / cycleLength));
-        //Fill right channel
-        data          = (Float32*)ioData->mBuffers[1].mData;
-        (data)[frame] = (Float32)sin (2 * M_PI * (j / cycleLength));
-
-        j += 1.0;
-        if (j > cycleLength) { j -= cycleLength; }
-    }
-    player->startingFrameCount = j;
-}
+#include "AudioUtilities.h"
+#include "DSP/TestToneGenerator.h"
+#include "AudioTypes.h"
 
 //============================================
 //Render callback for sine wave
 //============================================
 OSStatus processBlock(void *inRefCon,
-                            AudioUnitRenderActionFlags *ioActionFlags,
-                            const AudioTimeStamp *inTimeStamp,
-                            UInt32 inBusNumber,
-                            UInt32 inNumberFrames,
-                            AudioBufferList *ioData)
+                      AudioUnitRenderActionFlags *ioActionFlags,
+                      const AudioTimeStamp *inTimeStamp,
+                      UInt32 inBusNumber,
+                      UInt32 inNumberFrames,
+                      AudioBufferList *ioData)
 {
-    MySineWavePlayer *player = (MySineWavePlayer*) inRefCon;
+    MyRenderer *player = (MyRenderer*) inRefCon; //This might be an issue
 
-    generateSine(player, ioData, inNumberFrames);
+    generateTestTone(player, ioData, inNumberFrames);
     //applyGain
     //applyFilter
     //etc
@@ -57,7 +31,7 @@ OSStatus processBlock(void *inRefCon,
 //============================================
 //Function for creating an output audio unit
 //============================================
-void CreateAndConnectOutputUnit(MySineWavePlayer *player)
+void CreateAndConnectOutputUnit(MyRenderer *player)
 {
     //============================================
     //First, define the output component
@@ -82,7 +56,7 @@ void CreateAndConnectOutputUnit(MySineWavePlayer *player)
     //============================================
     AURenderCallbackStruct input;
     input.inputProc       = processBlock;
-    input.inputProcRefCon = &player;
+    input.inputProcRefCon = player;
     checkError(AudioUnitSetProperty(player->outputUnit,
                                     kAudioUnitProperty_SetRenderCallback,
                                     kAudioUnitScope_Input,
@@ -97,25 +71,25 @@ void CreateAndConnectOutputUnit(MySineWavePlayer *player)
 //==========================================
 //Render function to place in main
 //==========================================
-void renderAudio()
+void renderAudio(MyRenderer* sineWavePlayer)
 {
-    MySineWavePlayer sineWavePlayer = {0};
+    *sineWavePlayer = {0};
     //============================
     //Callback function
     //============================
-    CreateAndConnectOutputUnit(&sineWavePlayer); //Callback function, good here
+    CreateAndConnectOutputUnit(sineWavePlayer); //Callback function, good here
     printf("Hi erik");
     //============================
     //Start playback
     //============================
-    checkError(AudioOutputUnitStart(sineWavePlayer.outputUnit),
+    checkError(AudioOutputUnitStart(sineWavePlayer->outputUnit),
                "Could not start output unit");
-    sleep(5);
-
-    cleanup:
-
-    AudioOutputUnitStop(sineWavePlayer.outputUnit);
-    AudioUnitUninitialize(sineWavePlayer.outputUnit);
-    AudioComponentInstanceDispose(sineWavePlayer.outputUnit);
 }
 
+void stopAudio(MyRenderer* player)
+{
+    printf("Stopping");
+    AudioOutputUnitStop(player->outputUnit);
+    AudioUnitUninitialize(player->outputUnit);
+    AudioComponentInstanceDispose(player->outputUnit);
+}

@@ -19,7 +19,7 @@ static void checkError(OSStatus error, const char* operation)
         errorString[0] = errorString[5] = '\'';
         errorString[6] = '\0';
     } else {
-        sprintf(errorString, "%d", (int)error);
+        snprintf(errorString, sizeof(errorString), "%d", (int)error);
         fprintf(stderr, "Error: %s (%s)\n", operation, errorString);
         exit(1);
     }
