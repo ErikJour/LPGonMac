@@ -6,6 +6,7 @@
 #import "../Geometries/TriangleGeo.h"
 #import "Common.h"
 #import "../Audio/AudioTypes.h"
+#include "mainWindow.h"
 
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 512
@@ -19,6 +20,7 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 @property GameRenderCommands                  gameRenderCommands;
 @property Uniforms                            uniforms;
 @property (nonatomic, assign) MyRenderer      *audioRenderer;
+@property UInt32                              x;
 @end
 
 //==============================================================
@@ -38,17 +40,21 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 {
 }
 
+- (void)setXOffset:(float)amount
+{
+    self.x += amount;
+}
+
 - (void)drawInMTKView:(MTKView *) view
 {
     dispatch_semaphore_wait(_frameBoundarySemaphore, DISPATCH_TIME_FOREVER);
 
     uint32_t frameIndex   = _currentFrameIndex;
+    uint32_t x = _x;
 
     uint32_t vertexCount = 0;
 
     game_vertex *vertices = self.gameRenderCommands.vertexBuffer[frameIndex]->vertices;
-
-
 
     vector_float4 blue    = { 0.0f, 0.0f, 1.0f, 1.0f };
     vector_float4 red     = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -58,8 +64,9 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
                &vertexCount,
                64,
                blue,
-               -120,
-               250);
+               x,
+               100);
+
 
     drawSquare(vertices,
                &vertexCount,

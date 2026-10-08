@@ -5,8 +5,7 @@
 #include "GameRenderer.h"
 #import "../Audio/AudioRenderer.h"
 #include <iostream>
-
-
+static uint32 X = 0;
 
 @interface LpgMtkView : MTKView
 - (instancetype)initWithFrame:(NSRect)frame audioRenderer:(MyRenderer *)audioRenderer;
@@ -87,6 +86,7 @@
     _viewDelegate.macVertexBuffers   = macVertexBuffers;
     _viewDelegate.gameRenderCommands = gameRenderCommand;
     _viewDelegate.audioRenderer      = audioRenderer;
+    _viewDelegate.x = X;
     [_viewDelegate configureMetal];
     self.delegate = _viewDelegate;
 
@@ -97,12 +97,11 @@
 
 - (void) mouseDown:(NSEvent *) event
 {
-    std::cout << event. << std::endl;
 }
 
 - (void) mouseUp:(NSEvent *) event
 {
-    std::cout << "Mouse up" << std::endl;
+    [_viewDelegate setXOffset:10];
 }
 
 - (void)scrollWheel:(NSEvent *)event
