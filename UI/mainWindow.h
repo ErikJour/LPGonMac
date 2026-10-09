@@ -99,18 +99,20 @@ static UInt32 clickCount = 0;
 
 - (void) mouseDown:(NSEvent *) event
 {
-    double locationX = event.locationInWindow.x; //if x is 5 to 55
-    double locationY = event.locationInWindow.y; //if y is 5 to 55
+    double locationX = event.locationInWindow.x;
+    double locationY = event.locationInWindow.y;
 
     clickCount++;
 
     if (locationX >= 5.0 && locationX <= 55.0 && locationY >= 5.0 && locationY <= 55.0) {
+
         if (clickCount % 2 == 1)
         {
             std::cout << "Clicked on ON button" << std::endl;
-//            audioOn = true;
+            buttonColor = { 0.5f, 1.0f, 1.0f, 1.0f };
         } else {
             std::cout << "Clicked on OFF button" << std::endl;
+            buttonColor = { 1.0f, .0f, 0.0f, 1.0f };
         }
     }
 

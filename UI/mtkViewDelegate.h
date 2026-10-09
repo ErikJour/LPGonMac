@@ -11,6 +11,7 @@
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 512
 static const NSUInteger kMaxBuffers = 3;
+static vector_float4 buttonColor     = { 1.0f, 0.0f, 0.0f, 1.0f };
 //==============================================================
 @interface
 MTKViewDelegate: NSObject <MTKViewDelegate>
@@ -21,6 +22,7 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 @property Uniforms                            uniforms;
 @property (nonatomic, assign) MyRenderer      *audioRenderer;
 @property UInt32                              x;
+@property Colors                              colors;
 @end
 
 //==============================================================
@@ -79,7 +81,7 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
     drawSquare(vertices,
                &vertexCount,
                16,
-               red,
+               buttonColor, //float4
                -224,
                -224);
 
