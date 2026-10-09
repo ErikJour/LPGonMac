@@ -6,9 +6,11 @@
 #include "AudioToolBox/AudioToolBox.h"
 #include "AudioUtilities.h"
 #include "DSP/TestToneGenerator.h"
+#include "DSP/AnimatedGain.h"
 #include "AudioTypes.h"
 
 static bool audioOn = false;
+static float gainAmount = 0.75f;
 
 
 //============================================
@@ -24,7 +26,7 @@ OSStatus processBlock(void *inRefCon,
     auto *renderer = (MyRenderer*) inRefCon;
 
         generateTestTone(renderer, ioData, inNumberFrames);
-        //applyGain
+        applyGain(renderer, ioData, inNumberFrames, gainAmount);
         //applyFilter
         //etc
 

@@ -16,22 +16,18 @@ inline void generateTestTone(MyRenderer *renderer, AudioBufferList *ioData, UInt
     double j = renderer->startingFrameCount;
     double cycleLength = 44100. / SINE_FREQUENCY;
     int frame = 0;
-    //Iterate over samples and fill each inside a buffer
+    auto *leftChannel = (Float32 *) ioData->mBuffers[0].mData;
+    auto *rightChannel = (Float32 *) ioData->mBuffers[1].mData;
     for (frame = 0; frame < inNumberFrames; ++frame) {
-        //Fill left channel
-        auto *data = (Float32 *) ioData->mBuffers[0].mData;
-        (data)[frame] = (Float32) sin(2 * M_PI * (j / cycleLength));
-        //Fill right channel
-        data = (Float32 *) ioData->mBuffers[1].mData;
-        (data)[frame] = (Float32) sin(2 * M_PI * (j / cycleLength));
+        auto sample           = (Float32) sin(2 * M_PI * (j / cycleLength));
+        (leftChannel)[frame]  = sample;
+        (rightChannel)[frame] = sample;
 
         j += 1.0;
-        renderer->outputData = *data;
-        //Correctly prints current value
+        renderer->outputData = *leftChannel;
         if (j > cycleLength) { j -= cycleLength; }
     }
     renderer->startingFrameCount = j;
-    // Atomic write compatible with both C and C++
     float current = renderer->outputData.load(std::memory_order_relaxed);
     renderer->outputData.store(current, std::memory_order_relaxed);
 
