@@ -1,0 +1,8 @@
+//
+// Created by Erik Jourgensen on 10/9/26.
+//
+
+#ifndef HOMEMADELPG_ANIMATEDGAIN_H
+#define HOMEMADELPG_ANIMATEDGAIN_H
+
+#endif //HOMEMADELPG_ANIMATEDGAIN_H

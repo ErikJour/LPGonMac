@@ -1,12 +1,12 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import "mtkViewDelegate.h"
-#import "RenderBuffers.h"
-#include "GameRenderer.h"
+#import "GraphcisEngine.h"
+#include "Common.h"
 #import "../Audio/AudioRenderer.h"
 #include <iostream>
 static uint32 X = 0;
 static UInt32 clickCount = 0;
+Colors color;
 
 
 @interface LpgMtkView : MTKView
@@ -109,10 +109,10 @@ static UInt32 clickCount = 0;
         if (clickCount % 2 == 1)
         {
             std::cout << "Clicked on ON button" << std::endl;
-            buttonColor = { 0.5f, 1.0f, 1.0f, 1.0f };
+            buttonColor = color.cream;
         } else {
             std::cout << "Clicked on OFF button" << std::endl;
-            buttonColor = { 1.0f, .0f, 0.0f, 1.0f };
+            buttonColor = color.red;
         }
     }
 
@@ -129,7 +129,6 @@ static UInt32 clickCount = 0;
 }
 
 @end
-
 
 
 //==============================================================
@@ -194,4 +193,3 @@ BtWindowDel: NSObject <NSApplicationDelegate, NSWindowDelegate>
 
 @end
 
-//=======================

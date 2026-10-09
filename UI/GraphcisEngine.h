@@ -1,7 +1,6 @@
 //
 // Created by Erik Jourgensen on 9/22/26.
 //
-#include "RenderBuffers.h"
 #import "../Geometries/SquareGeo.h"
 #import "../Geometries/TriangleGeo.h"
 #import "Common.h"

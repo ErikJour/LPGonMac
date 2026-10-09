@@ -13,9 +13,7 @@ set(CMAKE_C_STANDARD 11)
 add_executable(HomemadeLPG MACOSX_BUNDLE
         main.mm
         UI/mainWindow.h
-        UI/mtkViewDelegate.h
-        UI/RenderBuffers.h
-        UI/GameRenderer.h
+        UI/GraphcisEngine.h
         Geometries/SquareGeo.h
         Geometries/TriangleGeo.h
         Audio/AudioUtilities.h
@@ -23,6 +21,7 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         Audio/DSP/TestToneGenerator.h
         Audio/AudioTypes.h
         UI/Common.h
+        Audio/DSP/AnimatedGain.h
 )
 
 #======================================================
