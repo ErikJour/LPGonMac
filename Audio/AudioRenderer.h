@@ -8,6 +8,9 @@
 #include "DSP/TestToneGenerator.h"
 #include "AudioTypes.h"
 
+static bool audioOn = false;
+
+
 //============================================
 //Render callback for sine wave
 //============================================
@@ -18,14 +21,14 @@ OSStatus processBlock(void *inRefCon,
                       UInt32 inNumberFrames,
                       AudioBufferList *ioData)
 {
-    auto *renderer = (MyRenderer*) inRefCon; //This might be an issue
+    auto *renderer = (MyRenderer*) inRefCon;
 
-    generateTestTone(renderer, ioData, inNumberFrames);
-    //applyGain
-    //applyFilter
-    //etc
+        generateTestTone(renderer, ioData, inNumberFrames);
+        //applyGain
+        //applyFilter
+        //etc
 
-    return noErr;
+        return noErr;
 }
 
 //============================================

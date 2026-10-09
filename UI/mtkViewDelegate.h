@@ -42,7 +42,6 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
 - (void)setXOffset:(float)amount
 {
-    self.x += amount;
 }
 
 - (void)drawInMTKView:(MTKView *) view
@@ -64,23 +63,25 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
                &vertexCount,
                64,
                blue,
-               x,
-               100);
-
-
-    drawSquare(vertices,
-               &vertexCount,
-               35,
-               red,
-               100,
+               -96,
                0);
 
     drawSquare(vertices,
                &vertexCount,
-               100,
+               64,
                green,
-               300,
+               96,
                0);
+
+    //=================================
+    //I want to make this an On button
+    //==================================
+    drawSquare(vertices,
+               &vertexCount,
+               16,
+               red,
+               -224,
+               -224);
 
 
     @autoreleasepool{

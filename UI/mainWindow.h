@@ -6,6 +6,8 @@
 #import "../Audio/AudioRenderer.h"
 #include <iostream>
 static uint32 X = 0;
+static UInt32 clickCount = 0;
+
 
 @interface LpgMtkView : MTKView
 - (instancetype)initWithFrame:(NSRect)frame audioRenderer:(MyRenderer *)audioRenderer;
@@ -13,7 +15,7 @@ static uint32 X = 0;
 
 @implementation LpgMtkView
 {
-    MTKViewDelegate*            _viewDelegate;   // consider renaming the class, e.g. LpgRenderer
+    MTKViewDelegate*            _viewDelegate;
     id<MTLCommandQueue>         _commandQueue;
     id<MTLRenderPipelineState>  _solidColorPipelineState;
 }
@@ -97,6 +99,21 @@ static uint32 X = 0;
 
 - (void) mouseDown:(NSEvent *) event
 {
+    double locationX = event.locationInWindow.x; //if x is 5 to 55
+    double locationY = event.locationInWindow.y; //if y is 5 to 55
+
+    clickCount++;
+
+    if (locationX >= 5.0 && locationX <= 55.0 && locationY >= 5.0 && locationY <= 55.0) {
+        if (clickCount % 2 == 1)
+        {
+            std::cout << "Clicked on ON button" << std::endl;
+//            audioOn = true;
+        } else {
+            std::cout << "Clicked on OFF button" << std::endl;
+        }
+    }
+
 }
 
 - (void) mouseUp:(NSEvent *) event

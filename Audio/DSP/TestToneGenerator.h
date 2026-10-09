@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdatomic.h>
 #include <cmath>
-#define SINE_FREQUENCY 880.0
+#define SINE_FREQUENCY 300.0
 
 
 inline void generateTestTone(MyRenderer *renderer, AudioBufferList *ioData, UInt32 inNumberFrames) {

@@ -31,5 +31,5 @@ fragment float4 fragmentMain(
         RasterizerData in [[stage_in]],
         constant Uniforms &uniforms [[buffer(11)]])
 {
-return in.color * 0.5 * uniforms.audioData;
+return in.color * 0.5 /** uniforms.audioData*/;
 }
