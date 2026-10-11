@@ -123,6 +123,11 @@ Colors color;
     [_viewDelegate setXOffset:10];
 }
 
+- (void)mouseMoved:(NSEvent*)event
+{
+    std::cout << event.locationInWindow.x << std::endl;
+}
+
 - (void)scrollWheel:(NSEvent *)event
 {
     std::cout << event.scrollingDeltaY << std::endl;
