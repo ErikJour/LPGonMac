@@ -8,8 +8,9 @@
 #include "DSP/TestToneGenerator.h"
 #include "DSP/AnimatedGain.h"
 #include "AudioTypes.h"
+#include "DSP/AnimatedFFT.h"
 
-static bool audioOn = false;
+static bool audioOn     = false;
 static float gainAmount = 0.75f;
 
 
@@ -25,8 +26,13 @@ OSStatus processBlock(void *inRefCon,
 {
     auto *renderer = (MyRenderer*) inRefCon;
 
-        generateTestTone(renderer, ioData, inNumberFrames);
-        applyGain(renderer, ioData, inNumberFrames, gainAmount);
+        if (renderer->onOff) {
+            generateTestTone(renderer, ioData, inNumberFrames);
+            applyGain(renderer, ioData, inNumberFrames, gainAmount);
+        } else {
+            applyGain(renderer, ioData, inNumberFrames, 0.0f);
+        }
+
         //applyFilter
         //etc
 
@@ -48,7 +54,7 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
     //============================================
     //Second, find the audio unit output component
     //============================================
-    AudioComponent comp = AudioComponentFindNext(NULL, &outputCd);
+    AudioComponent comp = AudioComponentFindNext(nullptr, &outputCd);
     if (comp == nullptr) {
         printf("can't get output unit");
         exit (-1);
@@ -78,7 +84,8 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
 //==========================================
 void renderAudio(MyRenderer* renderer)
 {
-    renderer->outputUnit = nullptr;
+    renderer->onOff              = FALSE;
+    renderer->outputUnit         = nullptr;
     renderer->startingFrameCount = 0.0;
     renderer->outputData.store(0.0f, std::memory_order_relaxed);
     //============================

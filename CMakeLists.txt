@@ -13,7 +13,7 @@ set(CMAKE_C_STANDARD 11)
 add_executable(HomemadeLPG MACOSX_BUNDLE
         main.mm
         UI/mainWindow.h
-        UI/GraphcisEngine.h
+        UI/GraphicsEngine.h
         Geometries/SquareGeo.h
         Geometries/TriangleGeo.h
         Audio/AudioUtilities.h
@@ -22,6 +22,7 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         Audio/AudioTypes.h
         UI/Common.h
         Audio/DSP/AnimatedGain.h
+        Audio/DSP/AnimatedFFT.h
 )
 
 #======================================================
@@ -46,6 +47,8 @@ target_link_libraries(HomemadeLPG
         "-framework CoreVideo"
         "-framework CoreMedia"
         "-framework AudioToolbox"
+        "-framework Accelerate"
+        "-framework CoreAudio"
 )
 
 #=========================================================

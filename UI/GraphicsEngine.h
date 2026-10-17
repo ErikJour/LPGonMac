@@ -10,7 +10,7 @@
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 512
 static const NSUInteger kMaxBuffers = 3;
-static vector_float4 buttonColor     = { 1.0f, 0.0f, 0.0f, 1.0f };
+static vector_float4 buttonColor    = { 1.0f, 0.0f, 0.0f, 1.0f };
 //==============================================================
 @interface
 MTKViewDelegate: NSObject <MTKViewDelegate>

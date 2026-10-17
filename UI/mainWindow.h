@@ -1,6 +1,6 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import "GraphcisEngine.h"
+#import "GraphicsEngine.h"
 #include "Common.h"
 #import "../Audio/AudioRenderer.h"
 #include <iostream>
@@ -109,10 +109,13 @@ Colors color;
         if (clickCount % 2 == 1)
         {
             std::cout << "Clicked on ON button" << std::endl;
+            _viewDelegate.audioRenderer->onOff = TRUE;
             buttonColor = color.cream;
+
         } else {
             std::cout << "Clicked on OFF button" << std::endl;
             buttonColor = color.red;
+            _viewDelegate.audioRenderer->onOff = FALSE;
         }
     }
 
