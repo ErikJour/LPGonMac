@@ -5,10 +5,10 @@
 #pragma once
 #include "AudioToolBox/AudioToolBox.h"
 #include "AudioUtilities.h"
-#include "DSP/TestToneGenerator.h"
 #include "DSP/AnimatedGain.h"
 #include "AudioTypes.h"
 #include "DSP/AnimatedFFT.h"
+#include "DSP/TestToneGenerator.h"
 
 static bool audioOn     = false;
 static float gainAmount = 0.75f;

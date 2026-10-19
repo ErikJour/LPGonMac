@@ -10,6 +10,7 @@ typedef struct {
 } RasterizerData;
 
 vertex RasterizerData
+
 vertexMain(uint vertexID [[ vertex_id ]],
            constant game_vertex *vertexArray [[ buffer(0) ]])
 {

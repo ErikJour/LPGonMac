@@ -80,8 +80,5 @@ struct AnimatedFFT {
         for (int k = 1; k < fftSize / 2; ++k) {
             magsDb[k].store(toDb(std::hypot(realP[k], imagP[k]) * scale), relaxed);
         }
-
-
     }
-
 };
