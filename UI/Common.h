@@ -9,7 +9,10 @@
 
 typedef struct {
     float audioData;
+    vector_float2 resolution;
 } Uniforms;
+
+
 
 struct game_vertex {
     vector_float4 position;

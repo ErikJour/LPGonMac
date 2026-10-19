@@ -35,10 +35,12 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 {
     _frameBoundarySemaphore = dispatch_semaphore_create(kMaxBuffers);
     _currentFrameIndex      = 0;
+    _uniforms.resolution = simd_make_float2(GLOBAL_WIDTH, GLOBAL_HEIGHT);
 }
 
 -(void)mtkView:(MTKView *) view drawableSizeWillChange:(CGSize) size
 {
+
 }
 
 - (void)setXOffset:(float)amount
@@ -62,27 +64,12 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
     drawSquare(vertices,
                &vertexCount,
-               64,
+               512,
                blue,
-               -96,
+               0,
                0);
 
-    drawSquare(vertices,
-               &vertexCount,
-               64,
-               green,
-               96,
-               0);
 
-    //=================================
-    //I want to make this an On button
-    //==================================
-    drawSquare(vertices,
-               &vertexCount,
-               16,
-               buttonColor, //float4
-               -224,
-               -224);
 
 
     @autoreleasepool{
