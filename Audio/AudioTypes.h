@@ -13,7 +13,8 @@ struct MyRenderer
     AudioUnit          outputUnit         { nullptr };
     double             startingFrameCount { 0.0 };
     std::atomic<float> outputData         { 0.0f };
-    bool               onOff              { TRUE };
+    bool               sineOn             { TRUE };
+    bool               noiseOn            { TRUE };
     double sampleRate                     {};
     AnimatedFFT                           fft[2];
 

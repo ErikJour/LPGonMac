@@ -12,16 +12,26 @@
 #define SINE_FREQUENCY 300.0
 static constexpr auto relaxed = std::memory_order_relaxed;
 
-    inline void generateTestTone(MyRenderer *renderer, AudioBufferList *ioData, UInt32 inNumberFrames) {
+struct TestTone {
+    int frame    = 0;
+    float sample = 0.0f;
+
+     void reset()
+    {
+        frame  = 0;
+        sample = 0;
+    }
+
+     void generateTestTone(MyRenderer *renderer, AudioBufferList *ioData, UInt32 inNumberFrames) {
         double j = renderer->startingFrameCount;
         double cycleLength = 44100. / SINE_FREQUENCY;
-        int frame = 0;
+        frame = 0;
         auto *leftChannel = (Float32 *) ioData->mBuffers[0].mData;
         auto *rightChannel = (Float32 *) ioData->mBuffers[1].mData;
         for (frame = 0; frame < inNumberFrames; ++frame) {
-            auto sample           = (Float32) sin(2 * M_PI * (j / cycleLength));
-            (leftChannel)[frame]  = sample;
-            (rightChannel)[frame] = sample;
+            sample                = (Float32) sin(2 * M_PI * (j / cycleLength));
+            (leftChannel)[frame]  += sample;
+            (rightChannel)[frame] += sample;
 
             j += 1.0;
             renderer->outputData = *leftChannel;
@@ -32,6 +42,9 @@ static constexpr auto relaxed = std::memory_order_relaxed;
         renderer->outputData.store(current, relaxed);
 
     }
+};
+
+
 
 
 

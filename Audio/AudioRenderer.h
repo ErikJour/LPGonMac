@@ -9,14 +9,26 @@
 #include "AudioTypes.h"
 #include "DSP/AnimatedFFT.h"
 #include "DSP/TestToneGenerator.h"
+#include "DSP/AnimatedFade.h"
+#include "DSP/AnimatedNoise.h"
 
 static bool audioOn     = false;
 static float gainAmount = 0.75f;
 
-
+//============================================
+//Clear buffers
+//============================================
+static void clearBuffers (AudioBufferList* ioData) noexcept
+{
+    for (UInt32 i = 0; i < ioData->mNumberBuffers; ++i)
+        std::memset (ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
+}
 //============================================
 //Render callback for sine wave
 //============================================
+TestTone testTone;
+AnimatedNoise noise;
+
 OSStatus processBlock(void *inRefCon,
                       AudioUnitRenderActionFlags *ioActionFlags,
                       const AudioTimeStamp *inTimeStamp,
@@ -25,15 +37,23 @@ OSStatus processBlock(void *inRefCon,
                       AudioBufferList *ioData)
 {
     auto *renderer = (MyRenderer*) inRefCon;
+    clearBuffers(ioData);
 
-        if (renderer->onOff) {
-            generateTestTone(renderer, ioData, inNumberFrames);
-            applyGain(renderer, ioData, inNumberFrames, gainAmount);
+        if (renderer->noiseOn) {
+            noise.nextFloat(renderer, ioData, inNumberFrames);
+        }
+        if (renderer->sineOn) {
+            testTone.generateTestTone(renderer, ioData, inNumberFrames);
         } else {
-            applyGain(renderer, ioData, inNumberFrames, 0.0f);
+            applyFadeOut(renderer, ioData, inNumberFrames);
+            testTone.reset();
         }
 
-        //applyFilter
+        applyGain(renderer, ioData, inNumberFrames, gainAmount);
+
+
+
+    //applyFilter
         //etc
 
         return noErr;
@@ -84,7 +104,8 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
 //==========================================
 void renderAudio(MyRenderer* renderer)
 {
-    renderer->onOff              = FALSE;
+    renderer->sineOn             = FALSE;
+    renderer->noiseOn            = FALSE;
     renderer->outputUnit         = nullptr;
     renderer->startingFrameCount = 0.0;
     renderer->outputData.store(0.0f, std::memory_order_relaxed);

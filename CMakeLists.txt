@@ -23,6 +23,8 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         UI/Common.h
         Audio/DSP/AnimatedGain.h
         Audio/DSP/AnimatedFFT.h
+        Audio/DSP/AnimatedFade.h
+        Audio/DSP/AnimatedNoise.h
 )
 
 #======================================================

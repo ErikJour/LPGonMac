@@ -9,8 +9,9 @@
 
 #define GLOBAL_WIDTH  512
 #define GLOBAL_HEIGHT 512
-static const NSUInteger kMaxBuffers = 3;
-static vector_float4 buttonColor    = { 1.0f, 0.0f, 0.0f, 1.0f };
+static const NSUInteger kMaxBuffers    = 3;
+static vector_float4 buttonOneColor    = { 1.0f, 0.0f, 0.0f, 1.0f };
+static vector_float4 buttonTwoColor    = { 0.0f, 1.0f, 1.0f, 1.0f };
 //==============================================================
 @interface
 MTKViewDelegate: NSObject <MTKViewDelegate>
@@ -80,8 +81,15 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
     drawSquare(vertices,
                &vertexCount,
                16,
-               buttonColor, //float4
+               buttonOneColor, //float4
                -224,
+               -224);
+
+    drawSquare(vertices,
+               &vertexCount,
+               16,
+               buttonTwoColor, //float4
+               224,
                -224);
 
 

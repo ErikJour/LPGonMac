@@ -108,14 +108,25 @@ Colors color;
 
         if (clickCount % 2 == 1)
         {
-            std::cout << "Clicked on ON button" << std::endl;
-            _viewDelegate.audioRenderer->onOff = TRUE;
-            buttonColor = color.cream;
+            _viewDelegate.audioRenderer->sineOn = TRUE;
+            buttonOneColor = color.cream;
 
         } else {
-            std::cout << "Clicked on OFF button" << std::endl;
-            buttonColor = color.red;
-            _viewDelegate.audioRenderer->onOff = FALSE;
+            buttonOneColor = color.red;
+            _viewDelegate.audioRenderer->sineOn = FALSE;
+        }
+    }
+
+    if (locationX >= (512.0 - 55.0) && locationX <= (512.0 - 5.0) && locationY >= 5.0 && locationY <= 55.0) {
+
+        if (clickCount % 2 == 1)
+        {
+            _viewDelegate.audioRenderer->noiseOn = TRUE;
+            buttonTwoColor = color.cream;
+
+        } else {
+            buttonTwoColor = color.red;
+            _viewDelegate.audioRenderer->noiseOn = FALSE;
         }
     }
 
