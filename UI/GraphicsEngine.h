@@ -70,8 +70,6 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
                0);
 
 
-
-
     @autoreleasepool{
 
         id<MTLCommandBuffer> CommandBuffer = [self.commandQueue commandBuffer];
